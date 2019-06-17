@@ -6,6 +6,7 @@
 # --name doc-tagger --storage-account  doctagger
 
 # func azure functionapp publish doc-tagger --publish-local-settings --build-native-deps
+# func azure functionapp publish doc-tagger  --build-native-deps
 
 
 # https://github.com/Azure/azure-functions-core-tools/issues/954
