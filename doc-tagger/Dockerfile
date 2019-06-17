@@ -12,6 +12,8 @@ WORKDIR /app
 ADD requirements.txt /app
 RUN python3 -m pip install -r requirements.txt
 
+ENV PYTHONUNBUFFERED 1
+
 ADD main.py /app
 
 ENTRYPOINT ["python3", "main.py"]
