@@ -7,6 +7,17 @@
 
 # func azure functionapp publish doc-tagger --publish-local-settings --build-native-deps
 
+
+# https://github.com/Azure/azure-functions-core-tools/issues/954
+# But, to answer your question, when you run func init and choose python, it will
+
+# Verify you are in a venv through VIRTUAL_ENV environment variable.
+# Verify your python version by running python --version
+# Run pip install wheel
+# Run pip install azure-functions azure-functions-worker
+# Run pip freeze (which creates the requirements.txt file)
+# May add your venv path to .funcignore if necessary (shouldn't matter in this case)
+
 import logging
 import json
 import azure.functions as func
@@ -18,6 +29,7 @@ import markdown2
 from urllib.parse import urlparse, parse_qs, urlencode
 import re
 import base64
+import requests
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -53,11 +65,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     def test_url(url):
         try:
-            req = urllib.request.Request(url, method='HEAD', headers={
-                'User-Agent': "link-checker"})
-            resp = urllib.request.urlopen(req, timeout=10)
-            if resp.code >= 400:
-                return "Got HTTP response code {}".format(resp.code)
+            response = requests.get(url,
+                                    allow_redirects=True, timeout=10)
+            if response.status_code >= 400:
+                return "Got HTTP response code {}".format(response.code)
         except Exception as e:
             return "Got exception {}".format(e)
         return None

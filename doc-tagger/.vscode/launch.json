@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["-f /home/dave/documents/README.md", "-v", "-t devto-blog-dglover", "-b https://raw.githubusercontent.com/gloveboxes/Connecting-Particle-Photon-to-Azure-IoT-Hub/master"]
+            "args": ["-f /home/dave/documents/README.md", "-v", "-t devto-blog-dglover", "-b https://raw.githubusercontent.com/gloveboxes/Connecting-Particle-Photon-to-Azure-IoT-Hub/master", "-x http://localhost:7071/api/doc-processor"]
         }
     ]
 }

@@ -20,8 +20,6 @@ doc_tagger_version = 1.0
 
 running_in_docker = False
 
-print('hello world')
-
 try:
     if os.environ['CA_DOC_TAGGGING_IN_DOCKER']:
         dir = "/docs"
@@ -33,14 +31,15 @@ except:
 def usage():
     print('Mandatory arguments: -f Filename -t tag')
     print('Optional arguments: -b baseUrl -v validate urls')
+    print('Test purposes only: -e override REST endpoint')
     print("\nExample: doc-tagger -f README.md -t devto-blog-alias -b https://raw.githubusercontent.com/GitHubName/Repository/master -v\n")
     sys.exit(2)
 
 
 def main():
-    global filename, tag, base_url, validate
+    global filename, tag, base_url, validate, doc_tagger_url
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hf:t:b:v", ["help"])
+        opts, args = getopt.getopt(sys.argv[1:], "hf:t:b:ve:", ["help"])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(err)  # will print something like "option -a not recognized"
@@ -56,6 +55,8 @@ def main():
             tag = a.strip()
         elif o == "-b":
             base_url = a.strip()
+        elif o == "-e":
+            doc_tagger_url = a.strip()
         elif o in ("-h", "--help"):
             usage()
             sys.exit()
@@ -80,7 +81,6 @@ def build_request():
     data['validate'] = "true" if validate else "false"
     data['version'] = doc_tagger_version
 
-
     with open(filename) as f:
         content = f.read()
         data['doc'] = str(base64.b64encode(content.encode('utf-8')), 'utf-8')
@@ -91,7 +91,6 @@ def call_doc_tagger_function(data):
 
     print("\nRebasing relative image links to absolute links" if base_url != '' else "")
     print("\nProcessing with link validation. This will take a few moments..." if validate else "\nProcessing...")
-    
 
     json_data = json.dumps(data)
     response = requests.post(doc_tagger_url, data=json_data)
@@ -109,6 +108,7 @@ def call_doc_tagger_function(data):
 
         for issue in json_data['issues']:
             print(issue)
+            print()
 
         print("\nSummary")
         print("==================================")
@@ -124,8 +124,10 @@ def call_doc_tagger_function(data):
         print(
             f'Call to Doc Tagger Azure Function Failed: {response}, {response.text}')
 
+
 def set_exit_status(issues):
-    sys.exit (issues)
+    sys.exit(issues)
+
 
 if __name__ == "__main__":
     print(f'\nDoc Tagger Version {doc_tagger_version}')
@@ -133,4 +135,3 @@ if __name__ == "__main__":
     build_request()
     issue_count = call_doc_tagger_function(data)
     set_exit_status(issue_count)
-
