@@ -1,0 +1,9 @@
+{
+    "azureFunctions.deploySubpath": "doc-taggger.zip",
+    "azureFunctions.pythonVenv": "doc-tagger",
+    "azureFunctions.projectLanguage": "Python",
+    "azureFunctions.projectRuntime": "~2",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "func: pack",
+    "python.pythonPath": "doc-tagger/bin/python3.6"
+}

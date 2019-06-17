@@ -1,0 +1,4 @@
+azure.functions~=1.0a
+markdown2
+bs4
+requests
