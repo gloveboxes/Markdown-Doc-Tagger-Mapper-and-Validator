@@ -14,6 +14,7 @@ filename = None
 tag = None
 base_url = ''
 validate = False
+htm = False
 data = {}
 
 doc_tagger_version = 1.0
@@ -30,14 +31,13 @@ except:
 
 def usage():
     print('Mandatory arguments: -f Filename -t tag')
-    print('Optional arguments: -b baseUrl -v validate urls')
-    print('Test purposes only: -e override REST endpoint')
+    print('Optional arguments: -b baseUrl -v validate urls -h generate html --help')
     print("\nExample: doc-tagger -f README.md -t devto-blog-alias -b https://raw.githubusercontent.com/GitHubName/Repository/master -v\n")
     sys.exit(2)
 
 
 def main():
-    global filename, tag, base_url, validate, doc_tagger_url
+    global filename, tag, base_url, validate, doc_tagger_url, htm
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hf:t:b:ve:", ["help"])
     except getopt.GetoptError as err:
@@ -51,13 +51,15 @@ def main():
             filename = a.strip()
         elif o == "-v":
             validate = True
+        elif o == "-h":
+            htm = True
         elif o == '-t':
             tag = a.strip()
         elif o == "-b":
             base_url = a.strip()
         elif o == "-e":
             doc_tagger_url = a.strip()
-        elif o in ("-h", "--help"):
+        elif o in ("--help"):
             usage()
             sys.exit()
         else:
@@ -79,6 +81,7 @@ def build_request():
     data['baseUrl'] = base_url
     data['tag'] = tag
     data['validate'] = "true" if validate else "false"
+    data['htm'] = "true" if htm else "false"
     data['version'] = doc_tagger_version
 
     with open(filename) as f:
@@ -102,6 +105,12 @@ def call_doc_tagger_function(data):
         with open(out_filename, "w") as o:
             data = str(base64.b64decode(json_data['doc']), 'utf-8')
             o.write(data)
+
+        if htm:
+            out_filename = filename + '.' + tag + '.html'
+            with open(out_filename, "w") as o:
+                data = str(base64.b64decode(json_data['html']), 'utf-8')
+                o.write(data)   
 
         print("\nNo issues found." if len(
             json_data['issues']) == 0 else "\nIssues Found!\n")

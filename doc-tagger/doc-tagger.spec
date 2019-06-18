@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['/home/dave/github/doc-tagger/doc-tagger'],
+             pathex=['\\\\wsl$\\Ubuntu-18.04\\home\\dave\\github\\doc-tagger\\doc-tagger'],
              binaries=[],
              datas=[],
              hiddenimports=[],

@@ -39,7 +39,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     issues = []
     summary = []
     broken_links = 0
-    malformed_links = 0
 
     try:
         req_body = req.get_json()
@@ -54,6 +53,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     absolute_url = data.get('baseUrl', '')
     validate_links = data.get('validate', "false")
     doc = data.get('doc', None)
+    generate_html = data.get('htm', "false")
 
     if tag_id == None or doc == None:
         return func.HttpResponse(
@@ -66,29 +66,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     def test_url(url):
         try:
+            print(url)
             response = requests.get(url,
-                                    allow_redirects=True, timeout=10)
+                                    allow_redirects=True, timeout=4)
             if response.status_code >= 400:
                 return "Got HTTP response code {}".format(response.code)
         except Exception as e:
             return "Got exception {}".format(e)
         return None
 
-    def check_query_string(url):
-        question = url.count('?')
-        ampersand = url.count('&')
-
-        if question > 1:
-            return 'Malformed query string'
-
-        if ampersand > 0 and question != 1:
-            return 'Malformed query string'
-
-        return None
-
     def validateUrls(url):
         if url.startswith('#'):
-            # url = base_url + url
             return 0
 
         if not url.startswith('http'):
@@ -104,16 +92,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return 0
 
     def delete_existing_tags(content):
-        malformed_links = 0
 
         links = re.findall(r"\[(.*?)\]\((.*?)\)", content)
         for link in links:
-
-            result = check_query_string(link[1])
-            if result is not None:
-                issues.append("{}: [{}]({})".format(result, link[0], link[1]))
-                malformed_links += 1
-                continue
 
             result = urlparse(link[1])
             url = (result.netloc).lower()
@@ -142,7 +123,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
                 content = content.replace(find, replace)
 
-        return content, malformed_links
+        return content
 
     def convert_relative_to_absolute(content):
         links = re.findall(r"\[(.*?)\]\((.*?)\)", content)
@@ -185,17 +166,48 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         return content
 
-    content, malformed_links = delete_existing_tags(content)
+    def check_url_integrity(urls, headings):
+        malformed_links = 0
+        for url in urls:
+            question = url.count('?')
+            ampersand = url.count('&')
+
+            if question > 1 or (ampersand > 0 and question != 1):
+                issues.append("Malformed query string: {}".format(url))
+                malformed_links += 1
+            elif url.startswith('#'):
+                search_id = url[1:]
+                for heading in headings:
+                    id = heading.get('id', None)
+                    if id is not None:
+                         if id == search_id:
+                            break
+                else:
+                    issues.append("{}: {}".format(
+                        "Internal link not found", url))
+                    malformed_links += 1
+
+        return malformed_links
+
+    htm = markdown2.markdown(content,  extras=["header-ids"])
+    soup = BeautifulSoup(htm, 'html.parser')
+
+    headings = soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
+    urls = [a['href'] for a in soup.find_all('a', href=True) if a.text]
+
+    malformed_links = check_url_integrity(urls, headings)
+
+    content = delete_existing_tags(content)
 
     if absolute_url != '':
         content = convert_relative_to_absolute(content)
 
     if validate_links.lower() == 'true':
+        # rebuild htm without the tracking tags
         htm = markdown2.markdown(content)
         soup = BeautifulSoup(htm, 'html.parser')
 
-        urls = [a['href']
-                for a in soup.find_all('a', href=True) if a.text]
+        urls = [a['href'] for a in soup.find_all('a', href=True) if a.text]
 
         for url in urls:
             broken_links += validateUrls(url)
@@ -206,9 +218,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     content = add_tracking_tag(content)
     data['doc'] = str(base64.b64encode(content.encode('utf-8')), 'utf-8')
+
+    if generate_html == 'true':
+        htm = markdown2.markdown(content, extras=[
+                                 "header-ids", "tables", "fenced-code-blocks", "target-blank-links"])
+        data['html'] = str(base64.b64encode(htm.encode('utf-8')), 'utf-8')
+
     data['issues'] = issues
 
-    summary.append(f"Malformed Query Strings: {malformed_links}")
+    summary.append(f"Invalid Links: {malformed_links}")
     summary.append("Links not validated" if validate_links.lower()
                    != 'true' else f"Broken Links: {broken_links}")
 
