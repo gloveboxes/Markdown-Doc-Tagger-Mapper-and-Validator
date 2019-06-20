@@ -66,11 +66,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     def test_url(url):
         try:
-            print(url)
-            response = requests.get(url,
-                                    allow_redirects=True, timeout=4)
+            response = requests.head(url, timeout=4)
             if response.status_code >= 400:
-                return "Got HTTP response code {}".format(response.code)
+                # check for redirecting url
+                response = requests.get(url,
+                                    allow_redirects=True, timeout=4)
+                if response.status_code >= 400:
+                    return "Got HTTP response code {}".format(response.status_code)
         except Exception as e:
             return "Got exception {}".format(e)
         return None
@@ -92,7 +94,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return 0
 
     def delete_existing_tags(content):
-
         links = re.findall(r"\[(.*?)\]\((.*?)\)", content)
         for link in links:
 
