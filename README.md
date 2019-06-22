@@ -28,11 +28,11 @@ As a command line tool
 
 Download executable for Linus, macOS, and Windows
 
-[Linux]()
+[Linux](https://doctagger.z22.web.core.windows.net/doc-tagger)
 
-[macOS]()
+[macOS](http://tobeposted)
 
-[Windows]()
+[Windows](https://doctagger.z22.web.core.windows.net/doc-tagger.exe)
 
 ## Grant Run permissions on Linus and macOS
 
