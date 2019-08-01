@@ -53,6 +53,6 @@ sudo chmod +x doc-tagger
 | -t | Tag: eg devto-blog-dglover | Required |
 | -v | Validate links | Optionial |
 | -h | Generate HTML for .md file | Optional |
-| -b | Absolute Image Base URL |
+| -b | Absolute Image Base URL | Optional |
 
 
