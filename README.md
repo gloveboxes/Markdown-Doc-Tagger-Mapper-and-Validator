@@ -20,11 +20,16 @@ The is CS Doc Tagger CLI automates the following
 
 ## Usage
 
-As a docker image
+### As a docker image
 
 docker run -v **your-doc-directory**:/docs glovebox/doc-tagger **options**
 
-As a command line tool
+eg on Windows (PowerShell), Linux and macOS
+```bash
+docker run -v $PWD:/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v -h -b https://raw.githubusercontent.com/gloveboxes/Azure-IoT-Edge-on-Raspberry-Pi-Buster/master/resources
+```
+
+### As a command line tool
 
 Download executable for Linus, macOS, and Windows
 
