@@ -25,12 +25,14 @@ The is CS Doc Tagger CLI automates the following
 #### Docker in WSL
 
 ```bash
-bash -c "docker run -v $('$PWD'):/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v  -h -b https://raw.githubusercontent.com/gloveboxes/Azure-IoT-Edge-on-Raspberry-Pi-Buster/master/resources"
+bash -c "docker run -v $('$PWD'):/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v"
 ```
 
 ```bash
-bash -c "docker run -v $('$PWD'):/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v"
+bash -c "docker run -v $('$PWD'):/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v  -h -b https://raw.githubusercontent.com/gloveboxes/Azure-IoT-Edge-on-Raspberry-Pi-Buster/master/resources"
 ```
+
+
 
 #### Docker Native
 ```
