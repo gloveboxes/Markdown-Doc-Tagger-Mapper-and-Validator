@@ -22,7 +22,7 @@ The is CS Doc Tagger CLI automates the following
 
 ### As a docker image
 
-#### Docker in WSL
+#### Linux Docker
 
 ```bash
 bash -c "docker run -v $('$PWD'):/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v"
@@ -34,7 +34,7 @@ bash -c "docker run -v $('$PWD'):/docs glovebox/doc-tagger -f README.md -t devto
 
 
 
-#### Docker Native or WSL Integrated
+#### Windows Docker Desktop inc WSL 2 Based Engine
 
 
 ##### Powershell
@@ -44,6 +44,7 @@ docker run -v ${pwd}:/docs glovebox/doc-tagger -f README.md -t devto-blog-uname 
 ```
 
 eg on Windows (PowerShell), Linux and macOS
+
 ```bash
 docker run -v ${pwd}:/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v -h -b https://raw.githubusercontent.com/gloveboxes/Azure-IoT-Edge-on-Raspberry-Pi-Buster/master/resources
 ```
