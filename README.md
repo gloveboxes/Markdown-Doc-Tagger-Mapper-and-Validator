@@ -37,13 +37,15 @@ bash -c "docker run -v $('$PWD'):/docs glovebox/doc-tagger -f README.md -t devto
 #### Docker Native or WSL Integrated
 
 
+##### Powershell
+
 ```bash
 docker run -v ${pwd}:/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v -h
 ```
 
 eg on Windows (PowerShell), Linux and macOS
 ```bash
-docker run -v $PWD:/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v -h -b https://raw.githubusercontent.com/gloveboxes/Azure-IoT-Edge-on-Raspberry-Pi-Buster/master/resources
+docker run -v ${pwd}:/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v -h -b https://raw.githubusercontent.com/gloveboxes/Azure-IoT-Edge-on-Raspberry-Pi-Buster/master/resources
 ```
 
 ### As a command line tool
