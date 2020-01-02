@@ -34,9 +34,11 @@ bash -c "docker run -v $('$PWD'):/docs glovebox/doc-tagger -f README.md -t devto
 
 
 
-#### Docker Native
-```
-docker run -v **your-doc-directory**:/docs glovebox/doc-tagger **options**
+#### Docker Native or WSL Integrated
+
+
+```bash
+docker run -v ${pwd}:/docs glovebox/doc-tagger -f README.md -t devto-blog-uname -v -h
 ```
 
 eg on Windows (PowerShell), Linux and macOS
